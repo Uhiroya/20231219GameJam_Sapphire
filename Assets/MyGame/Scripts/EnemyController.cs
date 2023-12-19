@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UniRx;
 
 public class EnemyController : MonoBehaviour
 {
@@ -27,6 +28,11 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
+        InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => _enemyState = EnemyState.Stop)
+            .AddTo(this);
+        InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => _enemyState = EnemyState.Chase)
+            .AddTo(this);
+
         _agent = GetComponent<NavMeshAgent>();
         _agent.autoBraking = false;
         _agent.speed = _patrolSpeed;
