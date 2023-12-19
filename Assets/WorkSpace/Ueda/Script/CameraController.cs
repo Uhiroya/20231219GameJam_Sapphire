@@ -11,24 +11,19 @@ public class CameraController : MonoBehaviour
 
     private float _defaultFov;
 
-    private void Awake()
+    private void Start()
     {
         _defaultFov = _camera.m_Lens.FieldOfView;
-        this.UpdateAsObservable()
-            .DistinctUntilChanged()
-            .Select(_ => GameMock.Instance.Mode)
-            .Subscribe(ChangeFov);
+        InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => OnStartDream());
+        InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => OnStartReal());
+    }
+    private void OnStartDream()
+    {
+        _camera.m_Lens.FieldOfView = 80f;
     }
 
-    private void ChangeFov(GameMode gameMode)
+    private void OnStartReal()
     {
-        if (gameMode == GameMode.Real)
-        {
-            _camera.m_Lens.FieldOfView = _defaultFov;
-        }
-        else if (gameMode == GameMode.Dream)
-        {
-            _camera.m_Lens.FieldOfView = 80f;
-        }
+        _camera.m_Lens.FieldOfView = _defaultFov;
     }
 }
