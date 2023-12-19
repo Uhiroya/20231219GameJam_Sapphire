@@ -33,12 +33,11 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
+        _agent = GetComponent<NavMeshAgent>();
         InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => _enemyState = EnemyState.Stop)
             .AddTo(this);
         InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => ChaseInterval().Forget())
             .AddTo(this);
-
-        _agent = GetComponent<NavMeshAgent>();
         _agent.autoBraking = false;
         _agent.speed = _patrolSpeed;
         Patrol();
