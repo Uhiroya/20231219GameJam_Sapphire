@@ -29,15 +29,22 @@ public class EnemyController : MonoBehaviour
 
     private NavMeshAgent _agent;
 
-    private EnemyState _enemyState = EnemyState.Patrol;
+    private EnemyState _currentState = EnemyState.Patrol;
+
+    private EnemyState _cachedState;
 
     private void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
-        InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => _enemyState = EnemyState.Stop)
+        InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ =>
+        {
+            _cachedState = _currentState;
+            _currentState = EnemyState.Stop;
+        })
             .AddTo(this);
         InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => ChaseInterval().Forget())
             .AddTo(this);
+
         _agent.autoBraking = false;
         _agent.speed = _patrolSpeed;
         Patrol();
@@ -45,7 +52,7 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        switch (_enemyState)
+        switch (_currentState)
         {
             case EnemyState.Patrol:
 
@@ -77,8 +84,8 @@ public class EnemyController : MonoBehaviour
     private async UniTask ChaseInterval()
     {
         var token = this.GetCancellationTokenOnDestroy();
-        await UniTask.Delay(TimeSpan.FromSeconds(_stopTime), cancellationToken : token);
-        _enemyState = EnemyState.Chase;
+        await UniTask.Delay(TimeSpan.FromSeconds(_stopTime), cancellationToken: token);
+        _currentState = _cachedState;
     }
 
     /// <summary>
@@ -93,7 +100,7 @@ public class EnemyController : MonoBehaviour
             //PlayerにRayが当たったら追いかける
             if (hit.collider.name == _playerTransform.gameObject.name)
             {
-                _enemyState = EnemyState.Chase;
+                _currentState = EnemyState.Chase;
             }
             break;
         }
