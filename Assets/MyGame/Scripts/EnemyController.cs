@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 using UniRx;
+using Cysharp.Threading.Tasks;
+using System;
 
 public class EnemyController : MonoBehaviour
 {
@@ -16,6 +18,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField, Tooltip("Playerを追いかける距離")]
     private float _chaseDistance = 6;
 
+    [SerializeField, Tooltip("夢から現実に戻った時の硬直時間")]
+    private float _stopTime = 1;
+
     [SerializeField]//仮
     private Transform _playerTransform;
 
@@ -30,7 +35,7 @@ public class EnemyController : MonoBehaviour
     {
         InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => _enemyState = EnemyState.Stop)
             .AddTo(this);
-        InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => _enemyState = EnemyState.Chase)
+        InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => ChaseInterval().Forget())
             .AddTo(this);
 
         _agent = GetComponent<NavMeshAgent>();
@@ -65,6 +70,16 @@ public class EnemyController : MonoBehaviour
                 break;
         }
 
+    }
+
+    /// <summary>
+    /// 夢から現実に戻った時に一定時間硬直する
+    /// </summary>
+    private async UniTask ChaseInterval()
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        await UniTask.Delay(TimeSpan.FromSeconds(_stopTime), cancellationToken : token);
+        _enemyState = EnemyState.Chase;
     }
 
     /// <summary>
