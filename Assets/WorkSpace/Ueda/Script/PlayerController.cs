@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Collider _objectDetectCollider;
     [SerializeField] private float _realSpeed;
     [SerializeField] private float _dreamSpeed;
+    [SerializeField] private int _firstBulletCount = 1;
     private readonly List<Collider> _hitList = new(10);
     private readonly bool _isWaiting = false;
     private Vector2 _currentInput;
@@ -23,6 +24,8 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         Bind();
+        BulletCount = _firstBulletCount;
+        UiManager.Instance.SetBulletCountText(BulletCount);
     }
 
     private void Bind()
@@ -33,6 +36,7 @@ public class PlayerController : MonoBehaviour
         _objectDetectCollider.OnTriggerEnterAsObservable().Subscribe(x => _hitList.Add(x)).AddTo(this);
         _objectDetectCollider.OnTriggerExitAsObservable().Subscribe(x => _hitList.Remove(x)).AddTo(this);
     }
+
     private void Update()
     {
         if (_isWaiting) return;
@@ -63,7 +67,7 @@ public class PlayerController : MonoBehaviour
     private void ActivateObject()
     {
         Collider activateCollider = null;
-        
+
         //中心に一番近いオブジェクトの判定
         float dotMax = -1;
         foreach (var collider in _hitList.Where(x => ActivateObjectsTag.Contains(x.tag)))
@@ -75,12 +79,13 @@ public class PlayerController : MonoBehaviour
                 }
 
         if (!activateCollider) return;
-        
+
         switch (activateCollider.tag)
         {
             case "Bullet":
                 print("GetBullet");
                 BulletCount++;
+                UiManager.Instance.SetBulletCountText(BulletCount);
 
                 Destroy(activateCollider.gameObject);
                 _hitList.Remove(activateCollider);
@@ -96,9 +101,11 @@ public class PlayerController : MonoBehaviour
                 if (BulletCount > 0)
                 {
                     BulletCount--;
+                    UiManager.Instance.SetBulletCountText(BulletCount);
                     print("KillEnemy");
 
-                    Destroy(activateCollider.gameObject);
+                    //Destroy(activateCollider.gameObject);
+                    activateCollider.GetComponent<EnemyController>().BulletHit();
                     _hitList.Remove(activateCollider);
                 }
 
