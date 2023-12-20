@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        AudioManager.Instance.PlayBGM(AudioManager.GameBGM.Main);
+        AudioManager.Instance.PlaySE(AudioManager.GameSE.GameStart);
         Cursor.visible = false;
         Bind();
         BulletCount = _firstBulletCount;
@@ -52,6 +54,7 @@ public class PlayerController : MonoBehaviour
             _walkingTime += Time.deltaTime;
             if (_walkingTime > _shakePerWalkingTime)
             {
+                AudioManager.Instance.PlaySE(AudioManager.GameSE.Walk);
                 _cameraController.CameraShakeByWalk();
                 _walkingTime = 0f;
             }
@@ -101,14 +104,14 @@ public class PlayerController : MonoBehaviour
                 print("GetBullet");
                 BulletCount++;
                 UiManager.Instance.SetBulletCountText(BulletCount);
-
+                AudioManager.Instance.PlaySE(AudioManager.GameSE.GetItems);
                 Destroy(activateCollider.gameObject);
                 _hitList.Remove(activateCollider);
                 break;
             case "HideObject":
                 print("Hide");
                 InGameManager.Instance?.ChangeInGameState(InGameState.Dream);
-
+                AudioManager.Instance.PlaySE(AudioManager.GameSE.TrashDisappear);
                 Destroy(activateCollider.gameObject);
                 _hitList.Remove(activateCollider);
                 break;
@@ -118,7 +121,7 @@ public class PlayerController : MonoBehaviour
                     BulletCount--;
                     UiManager.Instance.SetBulletCountText(BulletCount);
                     print("KillEnemy");
-
+                    AudioManager.Instance.PlaySE(AudioManager.GameSE.Shot);
                     //Destroy(activateCollider.gameObject);
                     activateCollider.GetComponent<EnemyController>().BulletHit();
                     _hitList.Remove(activateCollider);
@@ -135,6 +138,7 @@ public class PlayerController : MonoBehaviour
             case InGameState.Real:
                 if (other.tag.Equals("Enemy"))
                 {
+                    AudioManager.Instance.PlaySE(AudioManager.GameSE.GameOver);
                     InGameManager.Instance?.FinishGame(ResultType.Lose);
                     //負けの処理
                     print("負け");
@@ -162,10 +166,12 @@ public class PlayerController : MonoBehaviour
     private void OnStartDream()
     {
         _state = InGameState.Dream;
+        AudioManager.Instance.PlaySE(AudioManager.GameSE.GoToDream);
     }
 
     private void OnStartReal()
     {
         _state = InGameState.Real;
+        AudioManager.Instance.PlaySE(AudioManager.GameSE.BackToReality);
     }
 }
