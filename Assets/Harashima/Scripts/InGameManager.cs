@@ -40,6 +40,8 @@ public class InGameManager : SingletonMonoBehavior<InGameManager>
             return;
         }
 
+        _currentState = inGameState;
+
         switch (inGameState)
         {
             case InGameState.Dream:
