@@ -59,6 +59,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 70c50b25f1571e04c848119b98cf96a5, type: 3}
   - {fileID: 8300000, guid: a443dc64b131e8046be5ae0d29419230, type: 3}
   - {fileID: 8300000, guid: 03fcdcb7fd834074eb61b554f90d1448, type: 3}
+  - {fileID: 8300000, guid: 03fcdcb7fd834074eb61b554f90d1448, type: 3}
   _BGMClips:
   - {fileID: 8300000, guid: a55f04da67103bc45837998a6a71df00, type: 3}
 --- !u!82 &1389229041272142005

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks.Triggers;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int _firstBulletCount = 1;
     [SerializeField] private float _shakePerWalkingTime;
     private readonly List<Collider> _hitList = new(10);
-    private readonly bool _isWaiting = false;
+    private bool _isDead = false;
     private Vector2 _currentInput;
     private InGameState _state = InGameState.Real;
     private float _walkingTime;
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour
     {
         InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => OnStartDream()).AddTo(this);
         InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => OnStartReal()).AddTo(this);
+        InGameManager.Instance.OnFinishGame.Subscribe(_ => OnFinishGame()).AddTo(this);
         _hitCollider.OnTriggerEnterAsObservable().Subscribe(CheckHit).AddTo(this);
         _objectDetectCollider.OnTriggerEnterAsObservable().Subscribe(x => _hitList.Add(x)).AddTo(this);
         _objectDetectCollider.OnTriggerExitAsObservable().Subscribe(x => _hitList.Remove(x)).AddTo(this);
@@ -45,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (_isWaiting) return;
+        if (_isDead) return;
 
         var horizontal = Input.GetAxis("Horizontal");
         var vertical = Input.GetAxis("Vertical");
@@ -74,7 +76,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void FixedUpdate()
     {
-        if (_isWaiting) return;
+        if (_isDead) return;
 
         var dir = _cameraController.GetMoveDirection(_currentInput) *
                   (_state == InGameState.Real ? _realSpeed : _dreamSpeed);
@@ -139,6 +141,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckHit(Collider other)
     {
+        if (_isDead) return;
         switch (_state)
         {
             case InGameState.Real:
@@ -179,5 +182,11 @@ public class PlayerController : MonoBehaviour
     {
         _state = InGameState.Real;
         AudioManager.Instance.PlaySE(AudioManager.GameSE.BackToReality);
+    }
+
+    private void OnFinishGame()
+    {
+        _isDead = true;
+        _rigidBody.constraints = RigidbodyConstraints.FreezePosition;
     }
 }
