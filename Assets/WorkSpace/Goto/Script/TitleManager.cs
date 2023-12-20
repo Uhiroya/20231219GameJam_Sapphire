@@ -6,10 +6,8 @@ using UnityEngine.UI;
 
 public class TitleManager : MonoBehaviour
 {
-    [SerializeField]
-    CanvasGroup _startCanvasGroup;
-    [SerializeField]
-    float _imageFadeTime = 1f;
+    [SerializeField] CanvasGroup _startCanvasGroup;
+    [SerializeField] float _imageFadeTime = 1f;
 
     private void Start()
     {
@@ -24,7 +22,7 @@ public class TitleManager : MonoBehaviour
 #if UNITY_EDITOR
             Debug.Log("GO InGameScene");
 #endif
-            //SceneManager.LoadScene("InGame");
+            SceneManager.LoadScene("ingame");
         }
     }
 }
