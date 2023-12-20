@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
         Bind();
         BulletCount = _firstBulletCount;
         UiManager.Instance.SetBulletCountText(BulletCount);
+        InGameManager.Instance.OnFinishGame.Subscribe(_ => { Cursor.lockState = CursorLockMode.None; });
     }
 
     private void Bind()
@@ -63,6 +64,7 @@ public class PlayerController : MonoBehaviour
         {
             _walkingTime = 0f;
         }
+
         if (Input.GetMouseButtonDown(0)) ActivateObject();
     }
 
@@ -105,7 +107,9 @@ public class PlayerController : MonoBehaviour
                 BulletCount++;
                 UiManager.Instance.SetBulletCountText(BulletCount);
                 AudioManager.Instance.PlaySE(AudioManager.GameSE.GetItems);
-                Destroy(activateCollider.gameObject);
+                activateCollider.gameObject.SetActive(false);
+                MapController.Instance.SetActiveItem(activateCollider.gameObject, false);
+
                 _hitList.Remove(activateCollider);
                 break;
             case "HideObject":
@@ -123,7 +127,9 @@ public class PlayerController : MonoBehaviour
                     print("KillEnemy");
                     AudioManager.Instance.PlaySE(AudioManager.GameSE.Shot);
                     //Destroy(activateCollider.gameObject);
-                    activateCollider.GetComponent<EnemyController>().BulletHit();
+                    var ec = activateCollider.GetComponent<EnemyController>();
+                    ec.BulletHit();
+                    MapController.Instance.SetActiveEnemy(ec, false);
                     _hitList.Remove(activateCollider);
                 }
 
@@ -149,13 +155,13 @@ public class PlayerController : MonoBehaviour
                 if (other.tag.Equals("Enemy"))
                 {
                     //マップにアイコンを表示させる。
-                    MapController.Instance.SetActiveEnemy(other.gameObject.GetComponent<EnemyController>(),true);
+                    MapController.Instance.SetActiveEnemy(other.gameObject.GetComponent<EnemyController>(), true);
                     //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
                 }
                 else if (other.tag.Equals("Bullet"))
                 {
                     //マップにアイコンを表示させる。
-                    MapController.Instance.SetActiveItem(other.gameObject,true);
+                    MapController.Instance.SetActiveItem(other.gameObject, true);
                     //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
                 }
 
