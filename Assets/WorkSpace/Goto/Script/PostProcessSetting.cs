@@ -15,9 +15,9 @@ public class PostProcessSetting : MonoBehaviour
     [SerializeField,Range(0f,1f)] private float _dreamFogDensity;
     [SerializeField] private Color _dreamFogColor;
     Vignette _vignette;
-    private float _currentVignetteIntensity;
-    private float _currentFogDensity;
-    private Color _currentFogColor;
+    public float _currentVignetteIntensity;
+    public float _currentFogDensity;
+    public Color _currentFogColor;
     private void Start()
     {
         _postProcessVolume.profile.TryGetSettings(out _vignette);
@@ -40,14 +40,14 @@ public class PostProcessSetting : MonoBehaviour
             _currentFogDensity,
             _dreamFogDensity,
             _blendTime,
-            value =>_vignette.intensity.value = value
+            value => RenderSettings.fogDensity = value
         ).OnComplete(() => _currentFogDensity = _dreamFogDensity);
         
         DOVirtual.Float(
             _currentVignetteIntensity,
             _dreamVignetteIntensity,
             _blendTime,
-            value => RenderSettings.fogDensity = value
+            value => _vignette.intensity.value = value
         ).OnComplete(() => _currentVignetteIntensity = _dreamVignetteIntensity);
 
         DOVirtual.Color(
@@ -65,22 +65,29 @@ public class PostProcessSetting : MonoBehaviour
             _currentFogDensity,
             _realFogDensity,
             _blendTime,
-            value =>_vignette.intensity.value = value
-        ).OnComplete(() => _currentFogDensity = _realFogDensity);;
+            value =>
+            {
+                RenderSettings.fogDensity = value;
+            }
+            ).OnComplete(() => _currentFogDensity = _realFogDensity);;
         
         DOVirtual.Float(
             _currentVignetteIntensity,
             _realVignetteIntensity,
             _blendTime,
-            value => RenderSettings.fogDensity = value
-        ).OnComplete(() => _currentVignetteIntensity = _realVignetteIntensity);
+            value =>
+            {
+                _vignette.intensity.value = value;
+            }
+            ).OnComplete(() => _currentVignetteIntensity = _realVignetteIntensity);
         
         DOVirtual.Color(
             _currentFogColor,
             _realFogColor,
             _blendTime,
             value => RenderSettings.fogColor = value
-        ).OnComplete(() => _currentFogColor = _realFogColor);
+        )
+            .OnComplete(() =>  _currentFogColor = _realFogColor);
     }
     
 }
