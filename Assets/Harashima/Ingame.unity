@@ -1197,6 +1197,18 @@ PrefabInstance:
       propertyPath: m_Size.z
       value: 1.4
       objectReference: {fileID: 0}
+    - target: {fileID: 954452344, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
+      propertyPath: m_Size.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 954452344, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
+      propertyPath: m_Size.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 954452344, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
+      propertyPath: m_Size.z
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1016197438, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
       propertyPath: _postProcessVolume
       value: 
