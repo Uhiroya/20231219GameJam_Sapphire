@@ -6,7 +6,7 @@ public class InGameManager : SingletonMonoBehavior<InGameManager>
 {
     [SerializeField, Header("夢状態の制限時間")] private float _dreamTimeLimit = 10f;
 
-    private InGameState _currentState;
+    private InGameState _currentState = InGameState.Real;
     public InGameState CurrentState => _currentState;
 
     private readonly Subject<Unit> _onStartDreamState = new Subject<Unit>();
