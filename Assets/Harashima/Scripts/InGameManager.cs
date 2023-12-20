@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UniRx;
+using UniRx.Triggers;
 
 public class InGameManager : SingletonMonoBehavior<InGameManager>
 {
@@ -25,6 +26,31 @@ public class InGameManager : SingletonMonoBehavior<InGameManager>
 
     private readonly Subject<ResultType> _onFinishGame = new Subject<ResultType>();
     public IObservable<ResultType> OnFinishGame => _onFinishGame;
+
+    private void Start()
+    {
+        _onStartDreamState.Subscribe(_ => { _timer = _dreamTimeLimit; });
+    }
+
+    private float _timer = 0;
+
+    private void Update()
+    {
+        // if (Input.GetKeyDown(KeyCode.A))
+        // {
+        //     ChangeInGameState(InGameState.Dream);
+        // }
+
+        if (_currentState == InGameState.Dream)
+        {
+            _timer -= Time.deltaTime;
+            UiManager.Instance.SetTimeText(_timer);
+            if (_timer <= 0f)
+            {
+                ChangeInGameState(InGameState.Real);
+            }
+        }
+    }
 
     /// <summary>
     /// 現在の状態を変更して開始時のイベントを発火する

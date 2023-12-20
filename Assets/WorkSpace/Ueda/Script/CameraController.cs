@@ -2,13 +2,14 @@ using Cinemachine;
 using DG.Tweening;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private CinemachineVirtualCamera _camera;
-    [SerializeField] [Range(0.9f, 1f)] private float _objectWithInViewDot;
-    [SerializeField] private float _brendFovTime;
+    [SerializeField] [Range(0.9f, 1f)] private float _objectWithInView;
+    [SerializeField] private float _blendFovTime;
 
     private float _defaultFov;
 
@@ -17,7 +18,6 @@ public class CameraController : MonoBehaviour
     {
         _defaultFov = _camera.m_Lens.FieldOfView;
         Bind();
-        InGameManager.Instance?.ChangeInGameState(InGameState.Real);
     }
 
     private void Bind()
@@ -41,7 +41,7 @@ public class CameraController : MonoBehaviour
     {
         var targetDir = target - _cameraTransform.position;
         dot = Vector3.Dot(targetDir.normalized, _cameraTransform.forward);
-        if (_objectWithInViewDot < dot) return true;
+        if (_objectWithInView < dot) return true;
         return false;
     }
 
@@ -52,7 +52,7 @@ public class CameraController : MonoBehaviour
         DOVirtual.Float(
             _defaultFov,
             nextFov,
-            _brendFovTime,
+            _blendFovTime,
             value => _camera.m_Lens.FieldOfView = value
         );
     }
