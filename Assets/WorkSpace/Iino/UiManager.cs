@@ -24,9 +24,9 @@ public class UiManager : MonoBehaviour
 
     public void SetTimeText(float time)
     {
-        int minutes = (int)(time / 60);　//分
-        int seconds = (int)(time % 60);　//秒
-        _timerText.text = $"{minutes.ToString("00")} : {seconds.ToString("00")}";
+        int seconds = (int)(time / 60);　//秒
+        int milisecond = (int)(time % 60);　//ミリ秒
+        _timerText.text = $"{seconds.ToString("00")} : {milisecond.ToString("00")}";
     }
 
     public void SetImage(bool flg)
