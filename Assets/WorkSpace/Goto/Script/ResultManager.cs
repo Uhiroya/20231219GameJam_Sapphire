@@ -18,9 +18,9 @@ public class ResultManager : MonoBehaviour
         //_winCanvasGroup.alpha = 0;
         //_winCanvasGroup.interactable = false;
         //_winCanvasGroup.blocksRaycasts = false;
-        _loseCanvasGroup.alpha = 0;
-        _loseCanvasGroup.interactable = false;
-        _loseCanvasGroup.blocksRaycasts = false;
+        //_loseCanvasGroup.alpha = 0;
+        //_loseCanvasGroup.interactable = false;
+        //_loseCanvasGroup.blocksRaycasts = false;
 
         InGameManager.Instance.OnFinishGame.Subscribe(result =>
         {
