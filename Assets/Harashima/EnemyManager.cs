@@ -16,7 +16,10 @@ public class EnemyManager : SingletonMonoBehavior<EnemyManager>
             _enemyDictionary.Add(i, enemies[i]);
         }
 
-        UiManager.Instance.SetEnemyCountText(enemies.Length);
+        var uiManager = FindObjectOfType<UiManager>();
+        uiManager.SetEnemyCountText(enemies.Length);
+        
+        MapController.Instance.CreateEnemyUI(_enemyDictionary.Values.ToArray());
     }
 
     public void DeadEnemy(EnemyController enemyController)
@@ -29,7 +32,8 @@ public class EnemyManager : SingletonMonoBehavior<EnemyManager>
             return;
         }
 
-        UiManager.Instance.SetEnemyCountText(_enemyDictionary.Values.Count(x => x.IsDead == false));
+        var uiManager = FindObjectOfType<UiManager>();
+        uiManager.SetEnemyCountText(_enemyDictionary.Values.Count(x => x.IsDead == false));
 
 
         if (_enemyDictionary.Values.All(x => x.IsDead))
