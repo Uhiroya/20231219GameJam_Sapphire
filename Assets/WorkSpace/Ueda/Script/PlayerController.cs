@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
 
         var dir = _cameraController.GetMoveDirection(_currentInput) *
                   (_state == InGameState.Real ? _realSpeed : _dreamSpeed);
-        _rigidBody.velocity = new Vector3(dir.x, _rigidBody.velocity.y, dir.z);
+        _rigidBody.velocity = new Vector3(dir.x, 0f, dir.z);
     }
 
     /// <summary>
