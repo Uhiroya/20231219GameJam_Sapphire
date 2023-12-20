@@ -2,12 +2,16 @@ using Cinemachine;
 using DG.Tweening;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 public class CameraController : MonoBehaviour
 {
+    [SerializeField] private UnityEvent CameraShake;
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private CinemachineVirtualCamera _camera;
+
+    [SerializeField] private CinemachineImpulseSource _impulseSource;
     [SerializeField] [Range(0.9f, 1f)] private float _objectWithInView;
     [SerializeField] private float _blendFovTime;
 
@@ -45,6 +49,11 @@ public class CameraController : MonoBehaviour
         return false;
     }
 
+    public void CameraShakeByWalk()
+    {
+        Vector3 force = new Vector3(Random.Range(-0.5f,0.5f) ,-1f ,0f);
+        _impulseSource.GenerateImpulse(force);
+    }
     private void OnStartDream()
     {
         //_state = InGameState.Dream;   

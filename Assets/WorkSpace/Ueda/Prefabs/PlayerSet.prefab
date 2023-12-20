@@ -88,7 +88,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 15
+  m_Radius: 10
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2067845838305270126
 GameObject:
@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 2067845838305270115}
   - component: {fileID: 2067845838305270113}
   - component: {fileID: 392901450}
+  - component: {fileID: 1016197438}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -211,8 +212,10 @@ MonoBehaviour:
   _rigidBody: {fileID: 2067845838305270112}
   _hitCollider: {fileID: 954452344}
   _objectDetectCollider: {fileID: 2010288244}
-  _realSpeed: 3
+  _realSpeed: 8
   _dreamSpeed: 15
+  _firstBulletCount: 1
+  _shakePerWalkingTime: 0.5
 --- !u!114 &2067845838305270113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,10 +228,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7ea0cc6c472e714195d21ce7d43a3ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CameraShake:
+    m_PersistentCalls:
+      m_Calls: []
   _cameraTransform: {fileID: 334841686}
   _camera: {fileID: 6328959092968268930}
-  _objectWithInViewDot: 0.9
-  _brendFovTime: 1
+  _impulseSource: {fileID: 1726140405}
+  _objectWithInView: 0.9297
+  _blendFovTime: 2
 --- !u!65 &392901450
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -242,6 +249,26 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1016197438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2067845838305270126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7864bc0594d047458b5cb64b485a0fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _postProcessVolume: {fileID: 0}
+  _blendTime: 2
+  _realVignetteIntensity: 0.4
+  _realFogDensity: 0.14
+  _realFogColor: {r: 0, g: 0, b: 0, a: 0}
+  _dreamVignetteIntensity: 0.25
+  _dreamFogDensity: 0.15
+  _dreamFogColor: {r: 0.14396979, g: 0.105286576, b: 0.24528301, a: 0}
 --- !u!1 &2067845840152035156
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +443,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6328959092968268933}
   - component: {fileID: 6328959092968268930}
+  - component: {fileID: 1726140405}
+  - component: {fileID: 1726140406}
   m_Layer: 0
   m_Name: CM vcam1
   m_TagString: Untagged
@@ -477,6 +506,82 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 6328959092295297065}
+--- !u!114 &1726140405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6328959092968268931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ImpulseDefinition:
+    m_ImpulseChannel: 1
+    m_ImpulseShape: 2
+    m_CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_ImpulseDuration: 0.2
+    m_ImpulseType: 0
+    m_DissipationRate: 0.25
+    m_RawSignal: {fileID: 0}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_RepeatMode: 0
+    m_Randomize: 1
+    m_TimeEnvelope:
+      m_AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_AttackTime: 0
+      m_SustainTime: 0.2
+      m_DecayTime: 0.7
+      m_ScaleWithImpact: 1
+      m_HoldForever: 0
+    m_ImpactRadius: 100
+    m_DirectionMode: 0
+    m_DissipationMode: 2
+    m_DissipationDistance: 100
+    m_PropagationSpeed: 343
+  m_DefaultVelocity: {x: 0, y: -1, z: 0}
+--- !u!114 &1726140406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6328959092968268931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ApplyAfter: 2
+  m_ChannelMask: 1
+  m_Gain: 0.05
+  m_Use2DDistance: 0
+  m_UseCameraSpace: 1
+  m_ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    m_AmplitudeGain: 0.1
+    m_FrequencyGain: 1
+    m_Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1001 &6647742066352251888
 PrefabInstance:
   m_ObjectHideFlags: 0

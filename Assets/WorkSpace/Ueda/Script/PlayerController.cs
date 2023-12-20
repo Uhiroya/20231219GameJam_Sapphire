@@ -15,10 +15,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _realSpeed;
     [SerializeField] private float _dreamSpeed;
     [SerializeField] private int _firstBulletCount = 1;
+    [SerializeField] private float _shakePerWalkingTime;
     private readonly List<Collider> _hitList = new(10);
     private readonly bool _isWaiting = false;
     private Vector2 _currentInput;
-    private InGameState _state;
+    private InGameState _state = InGameState.Real;
+    private float _walkingTime;
     public int BulletCount { get; private set; }
 
     private void Start()
@@ -44,7 +46,19 @@ public class PlayerController : MonoBehaviour
         var horizontal = Input.GetAxis("Horizontal");
         var vertical = Input.GetAxis("Vertical");
         _currentInput = new Vector2(horizontal, vertical).normalized;
-
+        if (_state == InGameState.Real && vertical > 0)
+        {
+            _walkingTime += Time.deltaTime;
+            if (_walkingTime > _shakePerWalkingTime)
+            {
+                _cameraController.CameraShakeByWalk();
+                _walkingTime = 0f;
+            }
+        }
+        else
+        {
+            _walkingTime = 0f;
+        }
         if (Input.GetMouseButtonDown(0)) ActivateObject();
     }
 
