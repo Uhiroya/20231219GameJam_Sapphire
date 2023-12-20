@@ -582,6 +582,63 @@ MonoBehaviour:
     m_FrequencyGain: 1
     m_Duration: 1
     m_NoiseOffsets: {x: 0, y: 0, z: 0}
+--- !u!1001 &1466325759
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 334841686}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.09099996
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.054
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.137
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.71904814
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.6912806
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.04918108
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.051788777
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 87.74
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 1.27
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 9.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b15697de7eab24996b26b13209dfec34, type: 3}
+      propertyPath: m_Name
+      value: BgMD_Shotgun
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b15697de7eab24996b26b13209dfec34, type: 3}
 --- !u!1001 &6647742066352251888
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        Cursor.visible = false;
         Bind();
         BulletCount = _firstBulletCount;
         UiManager.Instance.SetBulletCountText(BulletCount);

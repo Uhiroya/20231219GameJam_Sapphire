@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine.UI;
 
 public class UiManager : SingletonMonoBehavior<UiManager>
 {
+    [SerializeField] private CanvasGroup _canvasGroup;
+
     //弾数
     [SerializeField] Text _bulletCountText;
 
@@ -23,6 +26,8 @@ public class UiManager : SingletonMonoBehavior<UiManager>
         SetActiveTimeText(false);
         InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => { SetActiveTimeText(true); });
         InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => { SetActiveTimeText(false); });
+
+        InGameManager.Instance.OnFinishGame.Subscribe(_ => { _canvasGroup.DOFade(0f, 1f); });
     }
 
     public void SetBulletCountText(int count)

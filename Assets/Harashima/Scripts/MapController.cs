@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class MapController : SingletonMonoBehavior<MapController>
 {
@@ -15,6 +16,8 @@ public class MapController : SingletonMonoBehavior<MapController>
     private Dictionary<EnemyController, Image> _enemies = new Dictionary<EnemyController, Image>();
     private Dictionary<GameObject, Image> _items = new Dictionary<GameObject, Image>();
 
+    private bool _isEnd = false;
+
     private void Start()
     {
         var bullets = GameObject.FindGameObjectsWithTag("Bullet");
@@ -24,6 +27,11 @@ public class MapController : SingletonMonoBehavior<MapController>
             ui.gameObject.SetActive(false);
             _items.Add(bullet, ui);
         }
+
+        InGameManager.Instance.OnFinishGame.Subscribe(_ =>
+        {
+            _isEnd = true;
+        });
     }
 
     public void CreateEnemyUI(EnemyController[] enemyControllers)
@@ -75,6 +83,10 @@ public class MapController : SingletonMonoBehavior<MapController>
 
     private void Update()
     {
+        if (_isEnd)
+        {
+            return;
+        }
         _mapParent.rotation = Quaternion.Euler(0, 0, _player.eulerAngles.y);
 
         foreach (var enemy in _enemies)
