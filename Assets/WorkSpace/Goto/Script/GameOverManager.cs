@@ -4,14 +4,10 @@ using UnityEngine.SceneManagement;
 
 public class GameOverManager : MonoBehaviour
 {
-    [SerializeField]
-    CanvasGroup _gameOverTextCanvasGroup;
-    [SerializeField]
-    CanvasGroup _returnToTitleCanvasGroup;
-    [SerializeField]
-    float _gameOverTextFadeTime = 1.0f;
-    [SerializeField]
-    float _returnToTitleTextFadeTime = 1.0f;
+    [SerializeField] CanvasGroup _gameOverTextCanvasGroup;
+    [SerializeField] CanvasGroup _returnToTitleCanvasGroup;
+    [SerializeField] float _gameOverTextFadeTime = 1.0f;
+    [SerializeField] float _returnToTitleTextFadeTime = 1.0f;
 
     bool _canReturnToTitleInput = false;
 
@@ -32,7 +28,7 @@ public class GameOverManager : MonoBehaviour
 #if UNITY_EDITOR
             Debug.Log("GO TitleScene");
 #endif
-            //SceneManager.LoadScene("Title");
+            SceneManager.LoadScene("Title");
         }
     }
 

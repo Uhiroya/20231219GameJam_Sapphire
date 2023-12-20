@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 997732318861400173}
-  - component: {fileID: 997732318861400147}
   - component: {fileID: 997732318861400146}
   m_Layer: 0
   m_Name: PostProcessing
@@ -33,29 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &997732318861400147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 997732318861400172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7864bc0594d047458b5cb64b485a0fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _postProcessVolume: {fileID: 997732318861400146}
-  _blendTime: 0
-  _realVignetteIntensity: 0
-  _realFogDensity: 0
-  _realFogColor: {r: 0, g: 0, b: 0, a: 0}
-  _dreamVignetteIntensity: 0
-  _dreamFogDensity: 0
-  _dreamFogColor: {r: 0, g: 0, b: 0, a: 0}
-  _currentVignetteIntensity: 0
-  _currentFogDensity: 0
-  _currentFogColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &997732318861400146
 MonoBehaviour:
   m_ObjectHideFlags: 0
