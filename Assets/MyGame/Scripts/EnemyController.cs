@@ -6,14 +6,11 @@ using System;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField, Tooltip("巡回する場所")]
-    private Transform[] _patrolPoints;
+    [SerializeField, Tooltip("巡回する場所")] private Transform[] _patrolPoints;
 
-    [SerializeField, Tooltip("巡回する速度")]
-    private float _patrolSpeed = 3;
+    [SerializeField, Tooltip("巡回する速度")] private float _patrolSpeed = 3;
 
-    [SerializeField, Tooltip("追いかける速度")]
-    private float _chaseSpeed = 5;
+    [SerializeField, Tooltip("追いかける速度")] private float _chaseSpeed = 5;
 
     [SerializeField, Tooltip("Playerを追いかける距離")]
     private float _chaseDistance = 6;
@@ -21,7 +18,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField, Tooltip("夢から現実に戻った時の硬直時間")]
     private float _stopTime = 1;
 
-    [SerializeField]//仮
+    [SerializeField] //仮
     private Transform _playerTransform;
 
     //現在のパトロール地点
@@ -33,14 +30,20 @@ public class EnemyController : MonoBehaviour
 
     private EnemyState _cachedState;
 
+    private bool _isDead = false;
+    public bool IsDead => _isDead;
+
+    private readonly Subject<bool> _onDeadSubject = new Subject<bool>();
+    public IObservable<bool> OnDeadAsObservable => _onDeadSubject;
+
     private void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
         InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ =>
-        {
-            _cachedState = _currentState;
-            _currentState = EnemyState.Stop;
-        })
+            {
+                _cachedState = _currentState;
+                _currentState = EnemyState.Stop;
+            })
             .AddTo(this);
         InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => ChaseInterval().Forget())
             .AddTo(this);
@@ -59,7 +62,7 @@ public class EnemyController : MonoBehaviour
                 Search();
                 if (_agent.remainingDistance <= 0)
                 {
-                    Patrol();//巡回先の変更
+                    Patrol(); //巡回先の変更
                 }
 
                 break;
@@ -75,7 +78,6 @@ public class EnemyController : MonoBehaviour
 
                 break;
         }
-
     }
 
     /// <summary>
@@ -102,6 +104,7 @@ public class EnemyController : MonoBehaviour
             {
                 _currentState = EnemyState.Chase;
             }
+
             break;
         }
     }
@@ -136,7 +139,9 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     public void BulletHit()
     {
-        Destroy(this);
+        this.gameObject.SetActive(false);
+        _isDead = true;
+        EnemyManager.Instance.DeadEnemy(this);
     }
 
     private void OnDrawGizmos()
@@ -145,10 +150,10 @@ public class EnemyController : MonoBehaviour
         Gizmos.DrawRay(transform.position, transform.forward * _chaseDistance);
     }
 }
+
 public enum EnemyState
 {
     Patrol,
     Chase,
     Stop,
 }
-
