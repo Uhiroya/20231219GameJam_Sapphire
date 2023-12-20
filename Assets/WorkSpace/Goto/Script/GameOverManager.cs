@@ -13,7 +13,7 @@ public class GameOverManager : MonoBehaviour
     [SerializeField]
     float _returnToTitleTextFadeTime = 1.0f;
 
-    bool _canReturnTOTitleInput = false;
+    bool _canReturnToTitleInput = false;
 
     private void Start()
     {
@@ -27,7 +27,7 @@ public class GameOverManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.anyKeyDown && _canReturnTOTitleInput)
+        if (Input.anyKeyDown && _canReturnToTitleInput)
         {
 #if UNITY_EDITOR
             Debug.Log("GO TitleScene");
@@ -40,7 +40,7 @@ public class GameOverManager : MonoBehaviour
     {
         _gameOverTextCanvasGroup.DOFade(1.0f, _gameOverTextFadeTime).OnComplete(() =>
         {
-            _canReturnTOTitleInput = true;
+            _canReturnToTitleInput = true;
             _returnToTitleCanvasGroup.DOFade(1.0f, _returnToTitleTextFadeTime).SetLoops(-1, LoopType.Yoyo);
         });
     }
