@@ -1,56 +1,138 @@
-using Cinemachine;
+using System.Collections.Generic;
+using System.Linq;
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
+    public static readonly string[] ActivateObjectsTag = { "Bullet", "HideObject", "Enemy" };
+    [SerializeField] private CameraController _cameraController;
     [SerializeField] private Rigidbody _rigidBody;
-    [SerializeField] private Camera _camera;
+    [SerializeField] private Collider _hitCollider;
+    [SerializeField] private Collider _objectDetectCollider;
     [SerializeField] private float _realSpeed;
     [SerializeField] private float _dreamSpeed;
-
-    private readonly float _defaultSensitivity;
-    private Transform _cameraTransform;
-    private Vector2 _input;
+    private readonly List<Collider> _hitList = new(10);
+    private readonly bool _isWaiting = false;
+    private Vector2 _currentInput;
     private InGameState _state;
+    public int BulletCount { get; private set; }
 
     private void Start()
     {
-        InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => OnStartDream());
-        InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => OnStartReal());
-        _cameraTransform = _camera.transform;
+        Bind();
     }
 
+    private void Bind()
+    {
+        InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => OnStartDream()).AddTo(this);
+        InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => OnStartReal()).AddTo(this);
+        _hitCollider.OnTriggerEnterAsObservable().Subscribe(CheckHit).AddTo(this);
+        _objectDetectCollider.OnTriggerEnterAsObservable().Subscribe(x => _hitList.Add(x)).AddTo(this);
+        _objectDetectCollider.OnTriggerExitAsObservable().Subscribe(x => _hitList.Remove(x)).AddTo(this);
+    }
     private void Update()
     {
+        if (_isWaiting) return;
+
         var horizontal = Input.GetAxis("Horizontal");
         var vertical = Input.GetAxis("Vertical");
-        _input = new Vector2(horizontal, vertical).normalized;
+        _currentInput = new Vector2(horizontal, vertical).normalized;
+
+        if (Input.GetMouseButtonDown(0)) ActivateObject();
     }
 
+    /// <summary>
+    ///     遷移中は待機させるためにGameStateをWaitingに切り替えたい。
+    ///     切り替え開始、終わりのイベントがあると嬉しい。
+    /// </summary>
     private void FixedUpdate()
     {
-        var cameraForward = _cameraTransform.forward;
-        var cameraRight = _cameraTransform.right;
-        transform.forward = new Vector3(cameraForward.x, 0f, cameraForward.z).normalized;
+        if (_isWaiting) return;
 
-        var moveX = new Vector3(cameraRight.x, 0f, cameraRight.z).normalized * _input.x;
-        var moveZ = new Vector3(cameraForward.x, 0f, cameraForward.z).normalized * _input.y;
-        var dir = (moveX + moveZ).normalized * _realSpeed;
-        var newVelocity = new Vector3(dir.x, _rigidBody.velocity.y, dir.z);
-        if (_state == InGameState.Real)
-            newVelocity *= _realSpeed;
-        else if (_state == InGameState.Dream) 
-            newVelocity *= _dreamSpeed;
-        _rigidBody.velocity = newVelocity;
+        var dir = _cameraController.GetMoveDirection(_currentInput) *
+                  (_state == InGameState.Real ? _realSpeed : _dreamSpeed);
+        _rigidBody.velocity = new Vector3(dir.x, _rigidBody.velocity.y, dir.z);
     }
 
-    private void OnTriggerEnter(Collider other)
+    /// <summary>
+    ///     カメラの中心により近いアクティブ可能なオブジェクトをアクティブにする。
+    /// </summary>
+    private void ActivateObject()
     {
-        if (InGameManager.Instance.CurrentState == InGameState.Real)
-            if (other.tag.Equals("Enemy"))
-                InGameManager.Instance?.FinishGame(ResultType.Lose);
+        Collider activateCollider = null;
+        
+        //中心に一番近いオブジェクトの判定
+        float dotMax = -1;
+        foreach (var collider in _hitList.Where(x => ActivateObjectsTag.Contains(x.tag)))
+            if (_cameraController.JudgeWithinPlayerView(collider.transform.position, out var dot))
+                if (dot > dotMax)
+                {
+                    dotMax = dot;
+                    activateCollider = collider;
+                }
+
+        if (!activateCollider) return;
+        
+        switch (activateCollider.tag)
+        {
+            case "Bullet":
+                print("GetBullet");
+                BulletCount++;
+
+                Destroy(activateCollider.gameObject);
+                _hitList.Remove(activateCollider);
+                break;
+            case "HideObject":
+                print("Hide");
+                InGameManager.Instance?.ChangeInGameState(InGameState.Dream);
+
+                Destroy(activateCollider.gameObject);
+                _hitList.Remove(activateCollider);
+                break;
+            case "Enemy":
+                if (BulletCount > 0)
+                {
+                    BulletCount--;
+                    print("KillEnemy");
+
+                    Destroy(activateCollider.gameObject);
+                    _hitList.Remove(activateCollider);
+                }
+
+                break;
+        }
+    }
+
+    private void CheckHit(Collider other)
+    {
+        switch (_state)
+        {
+            case InGameState.Real:
+                if (other.tag.Equals("Enemy"))
+                {
+                    InGameManager.Instance?.FinishGame(ResultType.Lose);
+                    //負けの処理
+                    print("負け");
+                }
+
+                break;
+            case InGameState.Dream:
+                if (other.tag.Equals("Enemy"))
+                {
+                    //マップにアイコンを表示させる。
+                    //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
+                }
+                else if (other.tag.Equals("Bullet"))
+                {
+                    //マップにアイコンを表示させる。
+                    //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
+                }
+
+                break;
+        }
     }
 
     private void OnStartDream()
@@ -62,6 +144,4 @@ public class PlayerController : MonoBehaviour
     {
         _state = InGameState.Real;
     }
-
-
 }
