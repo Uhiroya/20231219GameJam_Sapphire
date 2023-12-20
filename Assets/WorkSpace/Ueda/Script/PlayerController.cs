@@ -144,11 +144,13 @@ public class PlayerController : MonoBehaviour
                 if (other.tag.Equals("Enemy"))
                 {
                     //マップにアイコンを表示させる。
+                    MapController.Instance.SetActiveEnemy(other.gameObject.GetComponent<EnemyController>(),true);
                     //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
                 }
                 else if (other.tag.Equals("Bullet"))
                 {
                     //マップにアイコンを表示させる。
+                    MapController.Instance.SetActiveItem(other.gameObject,true);
                     //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
                 }
 

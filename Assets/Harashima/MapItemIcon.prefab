@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1476961122387559334}
   - component: {fileID: 6395718140611935720}
   m_Layer: 5
-  m_Name: MapEnemyImage
+  m_Name: MapItemIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
