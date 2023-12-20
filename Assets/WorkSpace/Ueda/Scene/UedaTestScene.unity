@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028326, g: 0.22571333, b: 0.30692202, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -872,8 +872,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 997732318861400147, guid: 625dc6a52fa6e2545a6ae5dff4772ecd, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 625dc6a52fa6e2545a6ae5dff4772ecd, type: 3}
 --- !u!1 &1636607579
 GameObject:
@@ -1219,25 +1218,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1016197438, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
-      propertyPath: _realFogDensity
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016197438, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
-      propertyPath: _dreamFogDensity
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016197438, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
       propertyPath: _postProcessVolume
       value: 
       objectReference: {fileID: 2028694133}
-    - target: {fileID: 1016197438, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
-      propertyPath: _dreamVignetteIntensity
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2067845838305270112, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
-      propertyPath: m_Constraints
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 2067845840152035156, guid: cd6c1f1b7d900a042b6b7df20240bb9b, type: 3}
       propertyPath: m_Name
       value: PlayerSet

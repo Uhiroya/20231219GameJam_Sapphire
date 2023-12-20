@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Harashima/Ingame.unity
+    guid: e7331e054ff2543e3b77852bf8f666d8
+  - enabled: 1
+    path: Assets/WorkSpace/Goto/Title.unity
+    guid: f2d161f21b6bbae4a95d97ee79709fd6
   m_configObjects: {}

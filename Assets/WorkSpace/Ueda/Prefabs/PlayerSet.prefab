@@ -194,7 +194,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 4
   m_CollisionDetection: 0
 --- !u!114 &2067845838305270115
 MonoBehaviour:
@@ -228,9 +228,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7ea0cc6c472e714195d21ce7d43a3ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraShake:
-    m_PersistentCalls:
-      m_Calls: []
   _cameraTransform: {fileID: 334841686}
   _camera: {fileID: 6328959092968268930}
   _impulseSource: {fileID: 1726140405}
@@ -264,11 +261,14 @@ MonoBehaviour:
   _postProcessVolume: {fileID: 0}
   _blendTime: 2
   _realVignetteIntensity: 0.4
-  _realFogDensity: 0.14
+  _realFogDensity: 0.2
   _realFogColor: {r: 0, g: 0, b: 0, a: 0}
-  _dreamVignetteIntensity: 0.25
-  _dreamFogDensity: 0.15
+  _dreamVignetteIntensity: 0.5
+  _dreamFogDensity: 0.25
   _dreamFogColor: {r: 0.14396979, g: 0.105286576, b: 0.24528301, a: 0}
+  _currentVignetteIntensity: 0
+  _currentFogDensity: 0
+  _currentFogColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &2067845840152035156
 GameObject:
   m_ObjectHideFlags: 0
