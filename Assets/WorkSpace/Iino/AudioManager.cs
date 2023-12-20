@@ -24,8 +24,6 @@ public class AudioManager : SingletonMonoBehavior<AudioManager>
     AudioClip[] _SEClips;
     [SerializeField]
     AudioClip _BGMClip;
-    [SerializeField]
-    float _BGMPlayTime = 10f;
 
     public void PlaySE(SEType soundIndex)
         => _audioSource.PlayOneShot(_SEClips[(int)soundIndex]);

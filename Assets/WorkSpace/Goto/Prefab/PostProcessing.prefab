@@ -46,6 +46,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _postProcessVolume: {fileID: 997732318861400146}
+  _blendTime: 0
+  _realVignetteIntensity: 0
+  _realFogDensity: 0
+  _realFogColor: {r: 0, g: 0, b: 0, a: 0}
+  _dreamVignetteIntensity: 0
+  _dreamFogDensity: 0
+  _dreamFogColor: {r: 0, g: 0, b: 0, a: 0}
+  _currentVignetteIntensity: 0
+  _currentFogDensity: 0
+  _currentFogColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &997732318861400146
 MonoBehaviour:
   m_ObjectHideFlags: 0
