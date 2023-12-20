@@ -30,14 +30,19 @@ public class EnemyController : MonoBehaviour
 
     private EnemyState _cachedState;
 
+    private float _currentSpeed;
+
+    private static ReactiveProperty<float> _speedRate = new(1f);     
+
     private bool _isDead = false;
     public bool IsDead => _isDead;
 
     private readonly Subject<bool> _onDeadSubject = new Subject<bool>();
     public IObservable<bool> OnDeadAsObservable => _onDeadSubject;
-
+    
     private void Start()
     {
+        _currentSpeed = _patrolSpeed ;
         _agent = GetComponent<NavMeshAgent>();
         InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ =>
             {
@@ -47,11 +52,12 @@ public class EnemyController : MonoBehaviour
             .AddTo(this);
         InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => ChaseInterval().Forget())
             .AddTo(this);
-
+        _speedRate.Subscribe(SetAgentSpeed).AddTo(this);
         _agent.autoBraking = false;
-        _agent.speed = _patrolSpeed;
+        
         Patrol();
     }
+
 
     private void Update()
     {
@@ -130,8 +136,14 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     private void Chase()
     {
-        _agent.speed = _chaseSpeed;
+        _currentSpeed = _chaseSpeed;
+        SetAgentSpeed(_speedRate.Value);
         _agent.destination = _playerTransform.position;
+    }
+    private void SetAgentSpeed(float speedRate)
+    {
+        _agent.speed = _currentSpeed * speedRate;
+        Debug.Log(_agent.speed);
     }
 
     /// <summary>
@@ -140,6 +152,7 @@ public class EnemyController : MonoBehaviour
     public void BulletHit()
     {
         this.gameObject.SetActive(false);
+        _speedRate.Value += 0.1f;
         _isDead = true;
         EnemyManager.Instance.DeadEnemy(this);
     }
@@ -149,6 +162,7 @@ public class EnemyController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, transform.forward * _chaseDistance);
     }
+    
 }
 
 public enum EnemyState
