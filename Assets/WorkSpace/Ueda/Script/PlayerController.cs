@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks.Triggers;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -18,11 +17,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int _firstBulletCount = 1;
     [SerializeField] private float _shakePerWalkingTime;
     private readonly List<Collider> _hitList = new(10);
-    private bool _isDead = false;
     private Vector2 _currentInput;
+    private bool _isDead;
     private InGameState _state = InGameState.Real;
     private float _walkingTime;
-    public int BulletCount { get; private set; }
+    private int BulletCount { get; set; }
 
     private void Start()
     {
@@ -35,6 +34,43 @@ public class PlayerController : MonoBehaviour
         InGameManager.Instance.OnFinishGame.Subscribe(_ => { Cursor.lockState = CursorLockMode.None; });
     }
 
+    private void Update()
+    {
+        if (_isDead) return;
+
+        var horizontal = Input.GetAxis("Horizontal");
+        var vertical = Input.GetAxis("Vertical");
+        _currentInput = new Vector2(horizontal, vertical).normalized;
+        if (_state == InGameState.Real)
+        {
+            if (vertical > 0)
+            {
+                _walkingTime += Time.deltaTime;
+                if (_walkingTime > _shakePerWalkingTime)
+                {
+                    AudioManager.Instance.PlaySE(AudioManager.GameSE.Walk);
+                    _cameraController.CameraShakeByWalk();
+                    _walkingTime = 0f;
+                }
+            }
+            else
+            {
+                _walkingTime = 0f;
+            }
+            ActivateObject();
+        }
+    }
+
+
+    private void FixedUpdate()
+    {
+        if (_isDead) return;
+
+        var dir = _cameraController.GetMoveDirection(_currentInput) *
+                  (_state == InGameState.Real ? _realSpeed : _dreamSpeed);
+        _rigidBody.velocity = new Vector3(dir.x, 0f, dir.z);
+    }
+
     private void Bind()
     {
         InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ => OnStartDream()).AddTo(this);
@@ -43,44 +79,6 @@ public class PlayerController : MonoBehaviour
         _hitCollider.OnTriggerEnterAsObservable().Subscribe(CheckHit).AddTo(this);
         _objectDetectCollider.OnTriggerEnterAsObservable().Subscribe(x => _hitList.Add(x)).AddTo(this);
         _objectDetectCollider.OnTriggerExitAsObservable().Subscribe(x => _hitList.Remove(x)).AddTo(this);
-    }
-
-    private void Update()
-    {
-        if (_isDead) return;
-
-        var horizontal = Input.GetAxis("Horizontal");
-        var vertical = Input.GetAxis("Vertical");
-        _currentInput = new Vector2(horizontal, vertical).normalized;
-        if (_state == InGameState.Real && vertical > 0)
-        {
-            _walkingTime += Time.deltaTime;
-            if (_walkingTime > _shakePerWalkingTime)
-            {
-                AudioManager.Instance.PlaySE(AudioManager.GameSE.Walk);
-                _cameraController.CameraShakeByWalk();
-                _walkingTime = 0f;
-            }
-        }
-        else
-        {
-            _walkingTime = 0f;
-        }
-
-        if (Input.GetMouseButtonDown(0)) ActivateObject();
-    }
-
-    /// <summary>
-    ///     遷移中は待機させるためにGameStateをWaitingに切り替えたい。
-    ///     切り替え開始、終わりのイベントがあると嬉しい。
-    /// </summary>
-    private void FixedUpdate()
-    {
-        if (_isDead) return;
-
-        var dir = _cameraController.GetMoveDirection(_currentInput) *
-                  (_state == InGameState.Real ? _realSpeed : _dreamSpeed);
-        _rigidBody.velocity = new Vector3(dir.x, 0f, dir.z);
     }
 
     /// <summary>
@@ -101,42 +99,44 @@ public class PlayerController : MonoBehaviour
                 }
 
         if (!activateCollider) return;
-
-        switch (activateCollider.tag)
+        if (Input.GetMouseButtonDown(0))
         {
-            case "Bullet":
-                print("GetBullet");
-                BulletCount++;
-                UiManager.Instance.SetBulletCountText(BulletCount);
-                AudioManager.Instance.PlaySE(AudioManager.GameSE.GetItems);
-                activateCollider.gameObject.SetActive(false);
-                MapController.Instance.SetActiveItem(activateCollider.gameObject, false);
-
-                _hitList.Remove(activateCollider);
-                break;
-            case "HideObject":
-                print("Hide");
-                InGameManager.Instance?.ChangeInGameState(InGameState.Dream);
-                AudioManager.Instance.PlaySE(AudioManager.GameSE.TrashDisappear);
-                Destroy(activateCollider.gameObject);
-                _hitList.Remove(activateCollider);
-                break;
-            case "Enemy":
-                if (BulletCount > 0)
-                {
-                    BulletCount--;
+            switch (activateCollider.tag)
+            {
+                case "Bullet":
+                    print("GetBullet");
+                    BulletCount++;
                     UiManager.Instance.SetBulletCountText(BulletCount);
-                    print("KillEnemy");
-                    AudioManager.Instance.PlaySE(AudioManager.GameSE.Shot);
-                    //Destroy(activateCollider.gameObject);
-                    var ec = activateCollider.GetComponent<EnemyController>();
-                    ec.BulletHit();
-                    MapController.Instance.SetActiveEnemy(ec, false);
-                    _hitList.Remove(activateCollider);
-                }
+                    AudioManager.Instance.PlaySE(AudioManager.GameSE.GetItems);
+                    activateCollider.gameObject.SetActive(false);
+                    MapController.Instance.SetActiveItem(activateCollider.gameObject, false);
 
-                break;
+                    _hitList.Remove(activateCollider);
+                    break;
+                case "HideObject":
+                    print("Hide");
+                    InGameManager.Instance?.ChangeInGameState(InGameState.Dream);
+                    AudioManager.Instance?.PlaySE(AudioManager.GameSE.TrashDisappear);
+                    Destroy(activateCollider.gameObject);
+                    _hitList.Remove(activateCollider);
+                    break;
+                case "Enemy":
+                    if (BulletCount > 0)
+                    {
+                        BulletCount--;
+                        UiManager.Instance.SetBulletCountText(BulletCount);
+                        print("KillEnemy");
+                        AudioManager.Instance.PlaySE(AudioManager.GameSE.Shot);
+                        //Destroy(activateCollider.gameObject);
+                        var ec = activateCollider.GetComponent<EnemyController>();
+                        ec.BulletHit();
+                        MapController.Instance.SetActiveEnemy(ec, false);
+                        _hitList.Remove(activateCollider);
+                    }
+                    break;
+            }
         }
+
     }
 
     private void CheckHit(Collider other)
@@ -149,6 +149,7 @@ public class PlayerController : MonoBehaviour
                 {
                     AudioManager.Instance.PlaySE(AudioManager.GameSE.GameOver);
                     InGameManager.Instance?.FinishGame(ResultType.Lose);
+                    _cameraController.LookTarget(other.transform);
                     //負けの処理
                     print("負け");
                 }
@@ -156,18 +157,13 @@ public class PlayerController : MonoBehaviour
                 break;
             case InGameState.Dream:
                 if (other.tag.Equals("Enemy"))
-                {
                     //マップにアイコンを表示させる。
                     MapController.Instance.SetActiveEnemy(other.gameObject.GetComponent<EnemyController>(), true);
-                    //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
-                }
+                //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
                 else if (other.tag.Equals("Bullet"))
-                {
                     //マップにアイコンを表示させる。
                     MapController.Instance.SetActiveItem(other.gameObject, true);
-                    //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
-                }
-
+                //ミニマップに表示可能なImageをここで生成してもいいかもしれない。
                 break;
         }
     }

@@ -42,6 +42,7 @@ public class EnemyController : MonoBehaviour
     
     private void Start()
     {
+        _speedRate.Value = 1f;     
         _currentSpeed = _patrolSpeed ;
         _agent = GetComponent<NavMeshAgent>();
         InGameManager.Instance.OnStartDreamAsObservable.Subscribe(_ =>
@@ -51,6 +52,8 @@ public class EnemyController : MonoBehaviour
             })
             .AddTo(this);
         InGameManager.Instance.OnStartRealAsObservable.Subscribe(_ => ChaseInterval().Forget())
+            .AddTo(this);
+        InGameManager.Instance.OnFinishGame.Subscribe(_ => OnFinish())
             .AddTo(this);
         _speedRate.Subscribe(SetAgentSpeed).AddTo(this);
         _agent.autoBraking = false;
@@ -162,7 +165,11 @@ public class EnemyController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, transform.forward * _chaseDistance);
     }
-    
+
+    private void OnFinish()
+    {
+        SetAgentSpeed(0f);
+    }
 }
 
 public enum EnemyState

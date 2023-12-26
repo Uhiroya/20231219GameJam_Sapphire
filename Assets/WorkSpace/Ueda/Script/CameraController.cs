@@ -45,6 +45,13 @@ public class CameraController : MonoBehaviour
         return (moveX + moveZ).normalized;
     }
 
+    public void LookTarget(Transform target)
+    {
+        _camera.enabled = false;
+        var cameraTransform = Camera.main.transform;
+        cameraTransform.position += target.forward.normalized * 1.5f;
+        cameraTransform.DOLookAt(target.position, 0.5f);
+    }
     private float GetAxisCustom(string axisName)
     {
         if (axisName == "Mouse X")
