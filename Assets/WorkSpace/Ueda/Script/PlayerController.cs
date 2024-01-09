@@ -3,6 +3,7 @@ using System.Linq;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
@@ -11,7 +12,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private Rigidbody _rigidBody;
     [SerializeField] private Collider _hitCollider;
-    [SerializeField] private Collider _objectDetectCollider;
+    [SerializeField] private SphereCollider _objectDetectCollider;
+    [SerializeField] private Image _targetImage;
     [SerializeField] private float _realSpeed;
     [SerializeField] private float _dreamSpeed;
     [SerializeField] private int _firstBulletCount = 1;
@@ -21,10 +23,11 @@ public class PlayerController : MonoBehaviour
     private bool _isDead;
     private InGameState _state = InGameState.Real;
     private float _walkingTime;
+    private float _detectRange;
     private int BulletCount { get; set; }
-
     private void Start()
     {
+        _detectRange = _objectDetectCollider.radius;
         AudioManager.Instance.PlayBGM(AudioManager.GameBGM.Main);
         AudioManager.Instance.PlaySE(AudioManager.GameSE.GameStart);
         Cursor.visible = false;
@@ -98,7 +101,12 @@ public class PlayerController : MonoBehaviour
                     activateCollider = collider;
                 }
 
-        if (!activateCollider) return;
+        if (!activateCollider)
+        {
+            _targetImage.color = Color.white;
+            return;
+        }
+        _targetImage.color = Color.red;
         if (Input.GetMouseButtonDown(0))
         {
             switch (activateCollider.tag)
@@ -170,12 +178,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnStartDream()
     {
+        _targetImage.color = new Color(0, 0, 0, 0);
         _state = InGameState.Dream;
         AudioManager.Instance.PlaySE(AudioManager.GameSE.GoToDream);
     }
 
     private void OnStartReal()
     {
+        _targetImage.color = Color.white;
         _state = InGameState.Real;
         AudioManager.Instance.PlaySE(AudioManager.GameSE.BackToReality);
     }

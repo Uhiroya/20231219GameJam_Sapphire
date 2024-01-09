@@ -3,9 +3,11 @@ using UnityEngine.AI;
 using UniRx;
 using Cysharp.Threading.Tasks;
 using System;
+using UniRx.Triggers;
 
 public class EnemyController : MonoBehaviour
 {
+    [SerializeField] private BoxCollider _playerDetectCollider;
     [SerializeField, Tooltip("巡回する場所")] private Transform[] _patrolPoints;
 
     [SerializeField, Tooltip("巡回する速度")] private float _patrolSpeed = 3;
@@ -57,7 +59,24 @@ public class EnemyController : MonoBehaviour
             .AddTo(this);
         _speedRate.Subscribe(SetAgentSpeed).AddTo(this);
         _agent.autoBraking = false;
-        
+        _playerDetectCollider.OnTriggerEnterAsObservable()
+            .Where(x => x.CompareTag("Player"))
+            .Subscribe(_ =>
+            {
+                _currentState = EnemyState.Chase;
+                _currentSpeed = _chaseSpeed;
+                SetAgentSpeed(_speedRate.Value);
+            })
+            .AddTo(this);
+        _playerDetectCollider.OnTriggerExitAsObservable()
+            .Where(x => x.CompareTag("Player"))
+            .Subscribe(_ =>
+            {
+                _currentState = EnemyState.Patrol;
+                _currentSpeed = _patrolSpeed;
+                SetAgentSpeed(_speedRate.Value);
+            })
+            .AddTo(this);
         Patrol();
     }
 
@@ -68,7 +87,7 @@ public class EnemyController : MonoBehaviour
         {
             case EnemyState.Patrol:
 
-                Search();
+                //Search();
                 if (_agent.remainingDistance <= 0)
                 {
                     Patrol(); //巡回先の変更
@@ -104,7 +123,8 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     private void Search()
     {
-        var raycastAll = Physics.RaycastAll(transform.position, transform.forward, _chaseDistance);
+        
+        var raycastAll = Physics.RaycastAll(transform.position, transform.forward * 3f, _chaseDistance);
 
         foreach (var hit in raycastAll)
         {
@@ -139,8 +159,7 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     private void Chase()
     {
-        _currentSpeed = _chaseSpeed;
-        SetAgentSpeed(_speedRate.Value);
+
         _agent.destination = _playerTransform.position;
     }
     private void SetAgentSpeed(float speedRate)
